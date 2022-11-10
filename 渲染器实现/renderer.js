@@ -7,7 +7,7 @@ const h = (tag,props,children) =>{
     }
 }
 //挂载mount
-const mount = (vnode,container)=>{
+const mount = (vnode,container)=>{ 
     // vnode->element
     // 1.创建真实元素dom，并在vnode上保留el
     const el = vnode.el = document.createElement(vnode.tag)
@@ -34,4 +34,42 @@ const mount = (vnode,container)=>{
     }
     // 4.将el挂载到container
     container.appendChild(el)
+}
+
+//patch判断vnode节点
+const patch = (n1,n2) =>{
+    if(n1.tag !== n2.tag){
+        const n1ElParent = n1.el.parentElement
+        n1ElParent.removeChild(n1.el)
+        mount(n2,n1ElParent)
+    }else{
+        // 1.取出element对象，并在n2中进行保存
+        const el = n2.el = n1.el
+
+        // 2.处理props
+        const oldProps = n1.props||{}
+        const newProps = n2.props||{}
+        // 2.1获取所有的newProps添加到el
+        for(const key in newProps){
+            const oldValue = oldProps[key]
+            const newValue = newProps[key]
+            if(oldValue!==newValue){
+                if(key.startsWith('on')){//对事件监听的判断
+                    el.addEventListener(key.slice(2).toLowerCase(),newValue)
+                }else{
+                    el.setAttribute(key,newValue)
+                }
+            }
+        }
+
+        // 2.2删除旧的props
+        for(const key in oldProps){
+            if(!(key in newProps)){
+                const value = oldProps[key]
+                el.removeEventListener(key.slice(2).toLowerCase(),value)
+            }else{
+                el.removeAttribute(key)
+            }
+        }
+    }
 }

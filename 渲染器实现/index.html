@@ -17,6 +17,13 @@
       ]);
       // 2.通过mount函数，将vnode挂载到div#app上
       mount(vnode, document.querySelector("#app"));
+
+      // 3.创建新的vnode
+      // 通过diff算法会进行vnode和vnode1的比较
+      setTimeout(() => {
+        const vnode1 = h("h2", { class: "heywzhy" }, "显示");
+        patch(vnode, vnode1);
+      }, 2000);
     </script>
   </body>
 </html>
