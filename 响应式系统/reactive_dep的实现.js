@@ -6,11 +6,7 @@ class Dep{
     addEffect(effect){
         this.subscribers.add(effect)
     }
-    depend(){
-        if(activeEffect){
-            this.addEffect(activeEffect)
-        }
-    }
+
     notify(){
         this.subscribers.forEach(effect=>{
             effect()
@@ -18,23 +14,18 @@ class Dep{
     }
 }
 
-let activeEffect = null
-function watchEffect(effect) {
-    activeEffect = effect
-    dep.depend()
-    effect()
-    activeEffect = null
-}
 const info = {counter:200}
 const dep = new Dep()
-
-watchEffect(function(){
-    console.log(info.counter*2)
-})
-watchEffect(function(){
+function doubleCounter(){
+    console.log(info.counter*2);
+}
+function powerCounter(){
     console.log(info.counter*info.counter )
+}
+doubleCounter()
 
-})
+dep.addEffect(doubleCounter)
+dep.addEffect(powerCounter)
 
 info.counter++
 dep.notify()
